@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import { theme } from "./theme";
@@ -62,11 +63,19 @@ const GlobalStyle = createGlobalStyle`
 	}
 	body {
 	  font-family: 'Archivo', sans-serif;
+    padding-top: 80px;
 	}
 	a {
 	  text-decoration:none;
+    color: inherit;
 	}
+  input {
+    outline: none;
+  border: none;
+  }
 `;
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -74,10 +83,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <RecoilRoot>
+      <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <App />
-      </ThemeProvider>
+      </ThemeProvider></QueryClientProvider>
     </RecoilRoot>
   </React.StrictMode>
 );
