@@ -62,8 +62,9 @@ const GlobalStyle = createGlobalStyle`
 	  box-sizing: border-box;
 	}
 	body {
-	  font-family: 'Archivo', sans-serif;
-    padding-top: 80px;
+ 	 font-family: 'Archivo', sans-serif;
+    	color: ${(props) => props.theme.white.darker};
+		overflow-x:hidden;
 	}
 	a {
 	  text-decoration:none;
@@ -84,10 +85,11 @@ root.render(
   <React.StrictMode>
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider></QueryClientProvider>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <App />
+        </ThemeProvider>
+      </QueryClientProvider>
     </RecoilRoot>
   </React.StrictMode>
 );
