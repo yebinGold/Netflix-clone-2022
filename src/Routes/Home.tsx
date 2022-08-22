@@ -1,16 +1,21 @@
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { getMovies, getTopMovies, getUpcomingMovies } from "./../api";
+import {
+  getMovies,
+  getTopMovies,
+  getUpcomingMovies,
+} from "./../api";
 import { IGetMoviesResult } from "./../api";
 import { makeImagePath } from "./../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import Loader from "../Components/Loader";
+import Modal from "../Components/Modal";
 
 const Wrapper = styled.div`
   background-color: black;
-  height: 200vh;
+  min-height: 200vh;
 `;
 
 const Banner = styled.div<{ bgImg: string }>`
@@ -48,37 +53,6 @@ const Overlay = styled(motion.div)`
   opacity: 0;
 `;
 
-const MovieCard = styled(motion.div)`
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 40vw;
-  height: 80vh;
-  border-radius: 15px;
-  overflow: hidden;
-  background-color: black;
-`;
-const MovieCardCover = styled.div`
-  width: 100%;
-  height: 300px;
-  background-size: cover;
-  background-position: center center;
-`;
-const MovieCardTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  font-size: 30px;
-  position: relative;
-  top: -60px;
-  padding: 20px;
-`;
-const MovieCardOverview = styled.p`
-  position: relative;
-  top: -50px;
-  padding: 20px;
-  font-size: 16px;
-  line-height: 1.2rem;
-`;
 
 const Home = () => {
   const { isLoading, data } = useQuery<IGetMoviesResult>(
@@ -95,20 +69,6 @@ const Home = () => {
   const movieIdMatch = useMatch("/movies/:movieId");
   const navigate = useNavigate();
   const onOverlayClick = () => navigate(-1);
-  
-  const clickedMovie =
-    movieIdMatch?.params.movieId &&
-    (data?.results.find(
-      (movie) => movie.id + "" === movieIdMatch.params.movieId
-    ) ||
-      topData?.results.find(
-        (movie) => movie.id + "" === movieIdMatch.params.movieId
-      ) ||
-      upcomingData?.results.find(
-        (movie) => movie.id + "" === movieIdMatch.params.movieId
-      ));
-
-  const { scrollY } = useScroll();
 
   return (
     <Wrapper>
@@ -145,26 +105,7 @@ const Home = () => {
                   exit={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 />
-                <MovieCard
-                  layoutId={movieIdMatch.params.movieId}
-                  style={{ top: scrollY.get() + 100 }}
-                >
-                  {clickedMovie && (
-                    <>
-                      <MovieCardCover
-                        style={{
-                          backgroundImage: `linear-gradient(transparent, black), url(
-                            ${makeImagePath(clickedMovie.backdrop_path, "w500")}
-                          )`,
-                        }}
-                      />
-                      <MovieCardTitle>{clickedMovie.title}</MovieCardTitle>
-                      <MovieCardOverview>
-                        {clickedMovie.overview}
-                      </MovieCardOverview>
-                    </>
-                  )}
-                </MovieCard>
+                <Modal movieId={movieIdMatch.params.movieId} />
               </>
             )}
           </AnimatePresence>

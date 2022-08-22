@@ -50,7 +50,7 @@ export interface IMovieDetail {
   id: number;
 }
 
-export function getMovieDetail(movieId: number) {
+export function getMovieDetail(movieId: string|undefined) {
   return fetch(`${BASE_PATH}/movie/${movieId}?api_key=${API_KEY}`).then(
     (res) => res.json()
   );
