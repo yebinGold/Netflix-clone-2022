@@ -3,8 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getMovies } from "./../api";
 import { IGetMoviesResult } from "./../api";
 import { makeImagePath } from "./../utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
+import { useNavigate, useMatch } from "react-router-dom";
+import { monitorEventLoopDelay } from "perf_hooks";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -50,22 +52,99 @@ const Row = styled(motion.div)`
 `;
 const MovieBox = styled(motion.div)<{ bgPhoto: string }>`
   background-color: white;
-  background-image: url(${props => props.bgPhoto});
+  background-image: url(${(props) => props.bgPhoto});
   background-size: cover;
   background-position: center center;
   border: 1px solid black;
   height: 150px;
+  cursor: pointer;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
+`;
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    text-align: center;
+    font-size: 16px;
+  }
+`;
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+`;
+
+const MovieCard = styled(motion.div)`
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 40vw;
+  height: 80vh;
+  border-radius: 15px;
+  overflow: hidden;
+  background-color: black;
+`;
+const MovieCardCover = styled.div`
+  width: 100%;
+  height: 300px;
+  background-size: cover;
+  background-position: center center;
+`;
+const MovieCardTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  font-size: 28px;
+  position: relative;
+  top: -60px;
+  padding: 20px;
+`;
+const MovieCardOverview = styled.p`
+  position: relative;
+  top: -50px;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 1.2rem;
 `;
 
 const rowVariants = {
   hidden: {
-    x: window.outerWidth + 5,
+    x: window.outerWidth + 14,
   },
   visible: {
     x: 0,
   },
   exit: {
-    x: -window.outerWidth - 5,
+    x: -window.outerWidth - 14,
+  },
+};
+
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.2,
+    y: -30,
+    transition: { delay: 0.5 },
+  },
+};
+
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: { delay: 0.5 },
   },
 };
 
@@ -76,6 +155,20 @@ const Home = () => {
     ["movies", "nowPlaying"],
     getMovies
   );
+  const movieIdMatch = useMatch("/movies/:movieId");
+  const navigate = useNavigate();
+  const onBoxClicked = (movidId: number) => {
+    navigate(`/movies/${movidId}`);
+  };
+  const onOverlayClick = () => navigate(-1);
+  const clickedMovie =
+    movieIdMatch?.params.movieId &&
+    data?.results.find(
+      (movie) => movie.id + "" === movieIdMatch.params.movieId
+    );
+
+  const { scrollY } = useScroll();
+
   const [index, setIndex] = useState(0);
   const increaseIdx = () => {
     if (data) {
@@ -119,13 +212,53 @@ const Home = () => {
                   .slice(offset * index, offset * index + offset)
                   .map((movie) => (
                     <MovieBox
+                      layoutId={movie.id + ""}
                       key={movie.id}
+                      variants={boxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
+                      onClick={() => onBoxClicked(movie.id)}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-                    ></MovieBox>
+                    >
+                      <img />
+                      <Info variants={infoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </MovieBox>
                   ))}
               </Row>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {movieIdMatch && (
+              <>
+                <Overlay
+                  onClick={onOverlayClick}
+                  exit={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
+                <MovieCard
+                  layoutId={movieIdMatch.params.movieId}
+                  style={{ top: scrollY.get() + 100 }}
+                >
+                  {clickedMovie && (
+                    <>
+                      <MovieCardCover
+                        style={{
+                          backgroundImage: `linear-gradient(transparent, black), url(
+                            ${makeImagePath(clickedMovie.backdrop_path, "w500")}
+                          )`,
+                        }}
+                      />
+                      <MovieCardTitle>{clickedMovie.title}</MovieCardTitle>
+                      <MovieCardOverview>{clickedMovie.overview}</MovieCardOverview>
+                    </>
+                  )}
+                </MovieCard>
+              </>
+            )}
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
