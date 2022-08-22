@@ -66,7 +66,7 @@ const MovieCard = styled(motion.div)`
   right: 0;
   margin: 0 auto;
   width: 40vw;
-  height: 80vh;
+  min-height: 60vh;
   border-radius: 15px;
   overflow: hidden;
   background-color: black;
@@ -101,7 +101,7 @@ const MovieCardDetail = styled.div`
 `;
 const MovieCardOverview = styled.p`
   position: relative;
-  top: -50px;
+  top: -45px;
   padding: 20px;
   font-size: 16px;
   line-height: 1.2rem;

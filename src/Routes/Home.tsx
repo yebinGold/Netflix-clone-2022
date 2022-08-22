@@ -7,7 +7,7 @@ import {
 } from "./../api";
 import { IGetMoviesResult } from "./../api";
 import { makeImagePath } from "./../utils";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
 import Slider from "../Components/Slider";
 import Loader from "../Components/Loader";

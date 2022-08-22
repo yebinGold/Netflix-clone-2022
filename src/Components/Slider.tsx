@@ -46,7 +46,7 @@ interface ISliderProps {
   data?: IGetMoviesResult;
 }
 
-const Slider = ({data}:ISliderProps) => {
+const Slider = ({ data }: ISliderProps) => {
   const navigate = useNavigate();
   const onBoxClicked = (movidId: number) => {
     navigate(`/movies/${movidId}`);
@@ -130,8 +130,7 @@ const Slider = ({data}:ISliderProps) => {
 
 export default Slider;
 
-const Wrapper = styled.div`
-`;
+const Wrapper = styled.div``;
 
 const Row = styled(motion.div)`
   display: grid;
@@ -174,7 +173,7 @@ const FrontBtn = styled(SliderBtn)`
 `;
 const Info = styled(motion.div)`
   padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
+  background-color: rgba(0, 0, 0, 0.7);
   opacity: 0;
   position: absolute;
   width: 100%;
