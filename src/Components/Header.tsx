@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
+import { useForm } from "react-hook-form";
 
 const Nav = styled(motion.nav)`
   width: 100%;
@@ -47,7 +48,7 @@ const Item = styled.li`
     color: ${(props) => props.theme.white.lighter};
   }
 `;
-const Search = styled.span`
+const Search = styled.form`
   margin-right: 20px;
   display: flex;
   align-items: center;
@@ -88,8 +89,8 @@ const logoVar = {
     fillOpacity: 1,
   },
   active: {
-    fillOpacity: [0, 1, 0], // 애니메이션 단계 설정
-    transition: { duration: 0.7, repeat: Infinity },
+    fillOpacity: [0, 1, 0.7, 1, 0.5], // 애니메이션 단계 설정
+    transition: { duration: 1, repeat: Infinity },
   },
 };
 
@@ -135,6 +136,18 @@ const Header = () => {
     });
   }, [scrollY]);
 
+  const navigate = useNavigate();
+
+  interface IForm {
+    keyword: string;
+  }
+
+  const { register, handleSubmit, setValue } = useForm<IForm>();
+  const onValid = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+    setValue("keyword", "");
+  };
+
   return (
     <Nav variants={navVar} animate={navAnimation} initial="top">
       <Col>
@@ -161,7 +174,7 @@ const Header = () => {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -220 : 0 }}
@@ -177,9 +190,11 @@ const Header = () => {
             ></motion.path>
           </motion.svg>
           <SearchInput
+            {...register("keyword", { required: true, minLength: 2 })}
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
             transition={{ type: "linear" }}
+            type="text"
             placeholder="Search for movie or TV show..."
           />
         </Search>

@@ -6,7 +6,11 @@ import { makeImagePath } from "./../utils";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useNavigate, useMatch } from "react-router-dom";
-import { monitorEventLoopDelay } from "perf_hooks";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Wrapper = styled.div`
   background-color: black;
@@ -50,9 +54,9 @@ const Row = styled(motion.div)`
   position: absolute;
   width: 100%;
 `;
-const MovieBox = styled(motion.div)<{ bgPhoto: string }>`
+const MovieBox = styled(motion.div)<{ bgphoto: string }>`
   background-color: white;
-  background-image: url(${(props) => props.bgPhoto});
+  background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
   border: 1px solid black;
@@ -65,6 +69,28 @@ const MovieBox = styled(motion.div)<{ bgPhoto: string }>`
     transform-origin: center right;
   }
 `;
+const SliderName = styled.h2`
+  padding: 15px 10px;
+  font-size: 22px;
+`;
+const SliderBtn = styled(motion.div)`
+  position: absolute;
+  width: 50px;
+  height: 100%;
+  background-color: transparent;
+  color: ${(props) => props.theme.white.lighter};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+const BackBtn = styled(SliderBtn)`
+  left: 0;
+`;
+const FrontBtn = styled(SliderBtn)`
+  right: 0;
+`;
+
 const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
@@ -119,15 +145,15 @@ const MovieCardOverview = styled.p`
 `;
 
 const rowVariants = {
-  hidden: {
-    x: window.outerWidth + 14,
-  },
+  hidden: (isBack: boolean) => ({
+    x: isBack ? -window.outerWidth - 14 : window.outerWidth + 14,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.outerWidth - 14,
-  },
+  exit: (isBack: boolean) => ({
+    x: isBack ? window.outerWidth + 14 : -window.outerWidth - 14,
+  }),
 };
 
 const boxVariants = {
@@ -170,14 +196,22 @@ const Home = () => {
   const { scrollY } = useScroll();
 
   const [index, setIndex] = useState(0);
+  const [isBack, setIsBack] = useState(false);
   const increaseIdx = () => {
+    setIsBack(false);
     if (data) {
       if (leaving) return;
       toggleLeaving();
       const totalMovies = data.results.length;
       const maxIndex = Math.floor(totalMovies / offset) - 1; // 최대 페이지
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      setIndex((prev) => (prev === maxIndex ? prev : prev + 1));
     }
+  };
+  const decreaseIdx = () => {
+    setIsBack(true);
+    if (leaving) return;
+    toggleLeaving();
+    setIndex((prev) => (prev === 0 ? prev : prev - 1));
   };
 
   // 동시에 여러 번 슬라이드 했을 때 exit 애니메이션이 겹치는 에러 디버깅
@@ -190,15 +224,17 @@ const Home = () => {
         <Loader>Loading</Loader>
       ) : (
         <>
-          <Banner
-            onClick={increaseIdx}
-            bgImg={makeImagePath(data?.results[0].backdrop_path || "")}
-          >
+          <Banner bgImg={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <SliderName>NOWPLAYING</SliderName>
+            <AnimatePresence
+              custom={isBack}
+              initial={false}
+              onExitComplete={toggleLeaving}
+            >
               <Row
                 key={index}
                 variants={rowVariants}
@@ -207,26 +243,39 @@ const Home = () => {
                 exit="exit"
                 transition={{ type: "tween", duration: 0.7 }}
               >
-                {data?.results
-                  .slice(1)
-                  .slice(offset * index, offset * index + offset)
-                  .map((movie) => (
-                    <MovieBox
-                      layoutId={movie.id + ""}
-                      key={movie.id}
-                      variants={boxVariants}
-                      initial="normal"
-                      whileHover="hover"
-                      transition={{ type: "tween" }}
-                      onClick={() => onBoxClicked(movie.id)}
-                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-                    >
-                      <img />
-                      <Info variants={infoVariants}>
-                        <h4>{movie.title}</h4>
-                      </Info>
-                    </MovieBox>
-                  ))}
+                <>
+                  <BackBtn
+                    whileHover={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                    onClick={decreaseIdx}
+                  >
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                  </BackBtn>
+                  {data?.results
+                    .slice(1)
+                    .slice(offset * index, offset * index + offset)
+                    .map((movie) => (
+                      <MovieBox
+                        layoutId={movie.id + ""}
+                        key={movie.id}
+                        variants={boxVariants}
+                        initial="normal"
+                        whileHover="hover"
+                        transition={{ type: "tween" }}
+                        onClick={() => onBoxClicked(movie.id)}
+                        bgphoto={makeImagePath(movie.backdrop_path, "w500")}
+                      >
+                        <Info variants={infoVariants}>
+                          <h4>{movie.title}</h4>
+                        </Info>
+                      </MovieBox>
+                    ))}
+                  <FrontBtn
+                    whileHover={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                    onClick={increaseIdx}
+                  >
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </FrontBtn>
+                </>
               </Row>
             </AnimatePresence>
           </Slider>
@@ -252,7 +301,9 @@ const Home = () => {
                         }}
                       />
                       <MovieCardTitle>{clickedMovie.title}</MovieCardTitle>
-                      <MovieCardOverview>{clickedMovie.overview}</MovieCardOverview>
+                      <MovieCardOverview>
+                        {clickedMovie.overview}
+                      </MovieCardOverview>
                     </>
                   )}
                 </MovieCard>

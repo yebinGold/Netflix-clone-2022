@@ -63,6 +63,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 	body {
  	 font-family: 'Archivo', sans-serif;
+	 background-color: ${props => props.theme.black.veryDark};
     	color: ${(props) => props.theme.white.darker};
 		overflow-x:hidden;
 	}
