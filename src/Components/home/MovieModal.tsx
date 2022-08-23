@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { getMovieDetail, IMovieDetail } from "./../api";
-import { makeImagePath } from "./../utils";
+import { getMovieDetail, IMovieDetail } from "../../api";
+import { makeImagePath } from "../../utils";
 import { motion, useScroll } from "framer-motion";
-import Loader from "../Components/Loader";
+import Loader from "../Loader";
 
 interface IModalProps {
   movieId: string | undefined;
@@ -24,7 +24,6 @@ const Modal = ({ movieId }: IModalProps) => {
     ["movies", "detail"],
     () => getMovieDetail(movieId)
   );
-  console.log(detailData);
 
   const { scrollY } = useScroll();
   return (

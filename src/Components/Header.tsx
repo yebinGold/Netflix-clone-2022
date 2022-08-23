@@ -42,6 +42,7 @@ const Item = styled.li`
   justify-content: center;
   flex-direction: column;
   cursor: pointer;
+  font-weight: 600;
   color: ${(props) => props.theme.white.darker};
   position: relative;
   &:hover {

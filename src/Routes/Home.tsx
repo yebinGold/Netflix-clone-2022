@@ -9,9 +9,9 @@ import { IGetMoviesResult } from "./../api";
 import { makeImagePath } from "./../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
-import Slider from "../Components/Slider";
+import Slider from "../Components/home/MovieSlider";
 import Loader from "../Components/Loader";
-import Modal from "../Components/Modal";
+import Modal from "../Components/home/MovieModal";
 
 const Wrapper = styled.div`
   background-color: black;

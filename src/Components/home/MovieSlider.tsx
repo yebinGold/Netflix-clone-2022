@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
-import { makeImagePath } from "./../utils";
+import { makeImagePath } from "../../utils";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,7 +8,7 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IGetMoviesResult } from "./../api";
+import { IGetMoviesResult } from "../../api";
 
 const rowVariants = {
   hidden: (isBack: boolean) => ({
