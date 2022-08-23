@@ -115,16 +115,28 @@ export function getShowDetail(showId: string | undefined) {
 }
 
 // search
-
-export interface ISearchResult {
+export interface ISearchMovieResult {
   page: number;
   results: IMovie[];
   total_pages: number;
   total_results: number;
 }
 
-export function getSearchMovies(keyword: string) {
+export function getSearchMovies(keyword: string, page?: number) {
   return fetch(
-    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}`
+    `${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&page=${page ? page : 1}`
+  ).then((res) => res.json());
+}
+
+export interface ISearchShowResult {
+  page: number;
+  results: IShow[];
+  total_pages: number;
+  total_results: number;
+}
+
+export function getSearchShows(keyword: string, page?: number) {
+  return fetch(
+    `${BASE_PATH}/search/tv?api_key=${API_KEY}&page=${page ? page : 1}&query=${keyword}`
   ).then((res) => res.json());
 }

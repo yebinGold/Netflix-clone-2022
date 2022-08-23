@@ -10,7 +10,7 @@ import { IGetShowsResult } from "./../api";
 import { makeImagePath } from "./../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
-import Slider from "../Components/tv/TvSlider";
+import TvSlider from "../Components/tv/TvSlider";
 import Loader from "../Components/Loader";
 import TvModal from "../Components/tv/TvModal";
 
@@ -85,19 +85,19 @@ const Tv = () => {
           <div style={{ position: "relative", top: "-100px" }}>
             <SliderWrapper>
               <SliderName>ON AIR</SliderName>
-              <Slider data={data} />
+              <TvSlider data={data} />
             </SliderWrapper>
             <SliderWrapper>
               <SliderName>AIRING TODAY</SliderName>
-              <Slider data={todayData} />
+              <TvSlider data={todayData} />
             </SliderWrapper>
             <SliderWrapper>
               <SliderName>POPULAR</SliderName>
-              <Slider data={popularData} />
+              <TvSlider data={popularData} />
             </SliderWrapper>
             <SliderWrapper>
               <SliderName>TOP RATED</SliderName>
-              <Slider data={topData} />
+              <TvSlider data={topData} />
             </SliderWrapper>
           </div>
 

@@ -46,7 +46,7 @@ interface ISliderProps {
   data?: IGetMoviesResult;
 }
 
-const Slider = ({ data }: ISliderProps) => {
+const MovieSlider = ({ data }: ISliderProps) => {
   const navigate = useNavigate();
   const onBoxClicked = (movidId: number) => {
     navigate(`/movies/${movidId}`);
@@ -105,7 +105,6 @@ const Slider = ({ data }: ISliderProps) => {
               <FontAwesomeIcon icon={faChevronLeft} />
             </BackBtn>
             {data?.results
-              .slice(1)
               .slice(offset * index, offset * index + offset)
               .map((movie) => (
                 <MovieBox
@@ -136,7 +135,7 @@ const Slider = ({ data }: ISliderProps) => {
   );
 };
 
-export default Slider;
+export default MovieSlider;
 
 const Wrapper = styled.div``;
 

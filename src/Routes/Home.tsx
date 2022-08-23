@@ -9,7 +9,7 @@ import { IGetMoviesResult } from "./../api";
 import { makeImagePath } from "./../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useMatch } from "react-router-dom";
-import Slider from "../Components/home/MovieSlider";
+import MovieSlider from "../Components/home/MovieSlider";
 import Loader from "../Components/Loader";
 import Modal from "../Components/home/MovieModal";
 
@@ -83,17 +83,17 @@ const Home = () => {
           <div style={{ position: "relative", top: "-100px" }}>
             <SliderWrapper>
               <SliderName>NOW PLAYING</SliderName>
-              <Slider data={data} />
+              <MovieSlider data={data} />
             </SliderWrapper>
 
             <SliderWrapper>
               <SliderName>TOP RATED</SliderName>
-              <Slider data={topData} />
+              <MovieSlider data={topData} />
             </SliderWrapper>
 
             <SliderWrapper>
               <SliderName>UPCOMING</SliderName>
-              <Slider data={upcomingData} />
+              <MovieSlider data={upcomingData} />
             </SliderWrapper>
           </div>
 

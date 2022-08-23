@@ -46,7 +46,7 @@ interface ISliderProps {
   data?: IGetShowsResult;
 }
 
-const Slider = ({ data }: ISliderProps) => {
+const TvSlider = ({ data }: ISliderProps) => {
   const navigate = useNavigate();
   const onBoxClicked = (showId: number) => {
     navigate(`/tv/${showId}`);
@@ -78,7 +78,7 @@ const Slider = ({ data }: ISliderProps) => {
     setIndex((prev) => (prev === 0 ? prev : prev - 1));
     toggleLeaving();
   };
-  
+
   // 동시에 여러 번 슬라이드 했을 때 exit 애니메이션이 겹치는 에러 디버깅
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -105,7 +105,6 @@ const Slider = ({ data }: ISliderProps) => {
               <FontAwesomeIcon icon={faChevronLeft} />
             </BackBtn>
             {data?.results
-              .slice(1)
               .slice(offset * index, offset * index + offset)
               .map((show) => (
                 <ShowBox
@@ -136,7 +135,7 @@ const Slider = ({ data }: ISliderProps) => {
   );
 };
 
-export default Slider;
+export default TvSlider;
 
 const Wrapper = styled.div``;
 
