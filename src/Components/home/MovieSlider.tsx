@@ -57,18 +57,26 @@ const Slider = ({ data }: ISliderProps) => {
   const increaseIdx = () => {
     setIsBack(false);
     if (data) {
-      if (leaving) return;
+      if (leaving) {
+        toggleLeaving();
+        return;
+      }
       toggleLeaving();
       const totalMovies = data.results.length;
       const maxIndex = Math.floor(totalMovies / offset) - 1; // 최대 페이지
       setIndex((prev) => (prev === maxIndex ? prev : prev + 1));
+      toggleLeaving();
     }
   };
   const decreaseIdx = () => {
     setIsBack(true);
-    if (leaving) return;
+    if (leaving) {
+      toggleLeaving();
+      return;
+    }
     toggleLeaving();
     setIndex((prev) => (prev === 0 ? prev : prev - 1));
+    toggleLeaving();
   };
 
   // 동시에 여러 번 슬라이드 했을 때 exit 애니메이션이 겹치는 에러 디버깅

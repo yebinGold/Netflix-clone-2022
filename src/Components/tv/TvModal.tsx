@@ -36,7 +36,7 @@ const Modal = ({ showId }: IModalProps) => {
 
   const { scrollY } = useScroll();
   return (
-    <ShowCard layoutId={showId} style={{ top: scrollY.get() + 100 }}>
+    <ShowCard style={{ top: scrollY.get() + 100 }} layoutId={showId}>
       {detailLoading || !detailData ? (
         <Loader />
       ) : (

@@ -156,6 +156,7 @@ const ShowBox = styled(motion.div)<{ bgphoto: string }>`
 `;
 const SliderBtn = styled(motion.div)`
   position: absolute;
+  z-index: 99;
   width: 50px;
   height: 100%;
   background-color: transparent;
